@@ -5,6 +5,11 @@ GANDI_API="https://api.gandi.net/v5/livedns/domains"
 
 IP4=$(curl -s4 $IP_SERVICE)
 
+echo "$GANDI_API"
+echo "$GANDI_APIKEY"
+echo "$GANDI_RECORD"
+echo "$GANDI_DOMAIN"
+
 if [[ -z "$IP4" ]]; then
   echo "Something went wrong. Can not get your IP from $IP_SERVICE "
   exit 1
