@@ -1,0 +1,93 @@
+---
+kind: pipeline
+type: docker
+name: default-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    dockerfile: Dockerfile
+    tags: 1.0.0-linux-arm64
+    repo: linutux/unbound
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
+---
+kind: pipeline
+type: docker
+name: default-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: plugins/docker
+  settings:
+    dockerfile: Dockerfile
+    tags: 1.0.0-linux-amd64
+    repo: linutux/unbound
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
+---
+kind: pipeline
+type: docker
+name: manifest
+
+steps:
+- name: manifest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target: linutux/gandi-dns:1.0.0
+    template: linutux/gandi-dns:1.0.0-OS-ARCH
+    platforms:
+      - linux/arm64
+      - linux/amd64
+
+- name: manifest-latest
+  image: plugins/manifest
+  settings:
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    target: linutux/gandi-dns:latest
+    template: linutux/gandi-dns:1.0.0-OS-ARCH
+    platforms:
+      - linux/arm64
+      - linux/amd64
+
+depends_on:
+- default-arm64
+- default-amd64
+---
+kind: signature
+hmac: 6524e450f34dde9f76fab216d91d643d9445d2a5b9503a81567c7d5ace040615
+
+...
