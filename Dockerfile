@@ -2,8 +2,9 @@ FROM debian:bullseye-slim
 
 COPY entrypoint.sh /
 
+# hadolint ignore=DL3008
 RUN apt-get update \
-  && apt-get install -y curl \
+  && apt-get install -y curl ca-certificates --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 ENV GANDI_DOMAIN ""
